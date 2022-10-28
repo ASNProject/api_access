@@ -17,7 +17,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class _MyDashboard extends State<Dashboard> {
-  final String apiUrl = "http://libra.akhdani.net:54125/api/trx/perdin/list";
+  final String apiUrl =
+      "http://libra.akhdani.net:54125/api/trx/perdin/list?limit=1000&offset=0";
   late Future<List<User>> futurePost;
 
   TextEditingController txtpegawai = TextEditingController();
@@ -148,6 +149,7 @@ class _MyDashboard extends State<Dashboard> {
         ),
       ),
       body: Container(
+        color: Colors.blueGrey[50],
         padding: const EdgeInsets.all(8),
         child: FutureBuilder<List<User>>(
           future: fetchUsers(),
@@ -163,9 +165,309 @@ class _MyDashboard extends State<Dashboard> {
                       color: Colors.white,
                       child: Column(
                         children: [
-                          Text(users[index].nama_pegawai),
-                          Text(users[index].uang_saku),
-                          Text(users[index].nrp),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(5),
+                                child: Icon(Icons.account_circle),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(5),
+                                child: Text(
+                                  users[index].nama_pegawai,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16),
+                                ),
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                padding:
+                                    const EdgeInsets.only(left: 10, top: 5),
+                                child: Text(
+                                  "Data perjalanan dinas",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      decoration: TextDecoration.underline),
+                                ),
+                              ),
+                              Expanded(child: Container()),
+                              Container(
+                                padding: const EdgeInsets.only(right: 0),
+                                child: IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(Icons.edit),
+                                ),
+                              ),
+                              Container(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.delete),
+                                    color: Colors.red,
+                                  )),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, bottom: 5),
+                                    child: Text("Tanggal perjalanan dinas"),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: Icon(
+                                          Icons.date_range_rounded,
+                                          size: 16,
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.only(left: 2),
+                                        child: Text(
+                                          users[index].tanggal_berangkat,
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 5, right: 5),
+                                    child: Icon(
+                                      Icons.east,
+                                      size: 18,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        child: Icon(
+                                          Icons.date_range_rounded,
+                                          size: 16,
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.only(left: 2),
+                                        child: Text(
+                                          users[index].tanggal_pulang,
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, bottom: 5, top: 5),
+                                    child: Text("Kota perjalanan dinas"),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: Icon(
+                                          Icons.location_on,
+                                          size: 14,
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.only(left: 1),
+                                        child: Text(
+                                          users[index].lokasi_asal,
+                                          style: TextStyle(fontSize: 11),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                      left: 5,
+                                    ),
+                                    child: Icon(
+                                      Icons.east,
+                                      size: 16,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        child: Icon(
+                                          Icons.location_on,
+                                          size: 14,
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.only(left: 1),
+                                        child: Text(
+                                          users[index].lokasi_tujuan,
+                                          style: TextStyle(fontSize: 11),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, bottom: 5, top: 5),
+                                    child: Text("Tujuan perjalanan dinas"),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Icon(Icons.arrow_right),
+                                  ),
+                                  Container(
+                                    child: Text(users[index].maksud),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Text(
+                                      "Kalkulasi perjalanan",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Icon(Icons.arrow_right),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.only(left: 1),
+                                    child: Text("Durasi perjalanan"),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.only(left: 30, top: 5),
+                                    child: Icon(
+                                      Icons.calendar_today,
+                                      size: 16,
+                                    ),
+                                  ),
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.only(left: 5, top: 5),
+                                    child: Text(users[index].durasi + " Hari"),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.only(left: 5, top: 5),
+                                    child: Icon(Icons.arrow_right),
+                                  ),
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.only(left: 1, top: 5),
+                                    child: Text("Jarak perjalanan"),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.only(left: 30, top: 5),
+                                    child: Icon(
+                                      Icons.sync_alt,
+                                      size: 16,
+                                    ),
+                                  ),
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.only(left: 5, top: 5),
+                                    child: Text(users[index].durasi + " Hari"),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Icon(Icons.arrow_right),
+                                  ),
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.only(left: 1, top: 5),
+                                    child: Text("Uang saku"),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.only(
+                                          left: 30, top: 5),
+                                      child: Icon(
+                                        Icons.payments,
+                                        size: 16,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.only(
+                                        left: 5,
+                                        top: 5,
+                                      ),
+                                      child:
+                                          Text("Rp. " + users[index].uang_saku),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          )
+                          //       Text(users[index].nama_pegawai),
+                          //       Text(users[index].uang_saku),
+                          //      Text(users[index].nrp),
                         ],
                       ),
                     );

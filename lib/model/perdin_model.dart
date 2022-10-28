@@ -13,6 +13,7 @@ class User {
   String tanggal_pulang;
   String durasi;
   String maksud;
+  String id;
 
   User(
       {required this.nrp,
@@ -24,7 +25,8 @@ class User {
       required this.tanggal_berangkat,
       required this.tanggal_pulang,
       required this.durasi,
-      required this.maksud});
+      required this.maksud,
+      required this.id});
 
   factory User.fromJson(Map<String, dynamic> json) => User(
       nrp: json['nrp'],
@@ -36,5 +38,6 @@ class User {
       tanggal_berangkat: json['tanggal_berangkat'],
       tanggal_pulang: json['tanggal_pulang'],
       durasi: json['lama_hari'],
-      maksud: json['maksud']);
+      maksud: json['maksud'],
+      id: json['id']);
 }

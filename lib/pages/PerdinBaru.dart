@@ -85,6 +85,7 @@ class _MyPerdinBaru extends State<PerdinBaru> {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        setState(() {});
         print(response.statusCode);
         print("Berhasil ditambahkan");
       } else {

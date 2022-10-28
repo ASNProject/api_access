@@ -21,6 +21,25 @@ class _MyDashboard extends State<Dashboard> {
       "http://libra.akhdani.net:54125/api/trx/perdin/list?limit=1000&offset=0";
   late Future<List<User>> futurePost;
 
+  void deleteperdin(String id) async {
+    try {
+      Response response = await delete(
+        Uri.parse("http://libra.akhdani.net:54125/api/trx/perdin/" + id),
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        setState(() {});
+        print("Berhasil dihapus");
+        print(response.statusCode);
+      } else {
+        print("Gagal hapus");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   TextEditingController txtpegawai = TextEditingController();
   TextEditingController txtkotaasal = TextEditingController();
   TextEditingController txtkotatujuan = TextEditingController();
@@ -103,33 +122,6 @@ class _MyDashboard extends State<Dashboard> {
                 fontWeight: FontWeight.w700,
                 fontSize: 22),
           ),
-
-          /*  child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-               Container(
-                padding: const EdgeInsets.only(left: 20),
-                child: const Text(
-                  'Hallo,',
-                  style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.only(left: 20),
-                child: Text(
-                  '$nama',
-                  style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600),
-                ),
-              ) 
-             
-            ],
-          ), */
         ),
         leadingWidth: 200,
         actions: <Widget>[
@@ -209,7 +201,11 @@ class _MyDashboard extends State<Dashboard> {
                               Container(
                                   padding: const EdgeInsets.only(right: 10),
                                   child: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      deleteperdin(
+                                          (users[index].id).toString());
+                                      print(users[index].id);
+                                    },
                                     icon: Icon(Icons.delete),
                                     color: Colors.red,
                                   )),

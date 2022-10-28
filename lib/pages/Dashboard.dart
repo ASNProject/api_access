@@ -90,24 +90,6 @@ class _MyDashboard extends State<Dashboard> {
       ),
     );
     //LISTVIEW
-
-    /*     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Dashboard',
-      home: Scaffold(
-        body: Column(
-          children: <Widget>[headers],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(context,
-                new MaterialPageRoute(builder: (context) => new PerdinBaru()));
-          },
-          child: const Icon(Icons.add),
-        ),//
-      ),
-    );
-*/
     return Scaffold(
       appBar: AppBar(
         leading: Container(

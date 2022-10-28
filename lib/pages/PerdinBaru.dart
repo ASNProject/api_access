@@ -1,4 +1,5 @@
 import 'dart:math' as Math;
+import 'dart:math';
 
 import 'package:api_access/pages/Register.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:api_access/pages/Dashboard.dart';
 
 class PerdinBaru extends StatefulWidget {
   const PerdinBaru({Key? key}) : super(key: key);
@@ -17,15 +20,31 @@ class PerdinBaru extends StatefulWidget {
 }
 
 class _MyPerdinBaru extends State<PerdinBaru> {
-  TextEditingController kotaasal = TextEditingController();
-  TextEditingController kotatujuan = TextEditingController();
-  TextEditingController keperluan = TextEditingController();
-  TextEditingController dateBerangkat = TextEditingController();
-  TextEditingController datePulang = TextEditingController();
+  final TextEditingController kotaasal = TextEditingController();
+  final TextEditingController kotatujuan = TextEditingController();
+  final TextEditingController keperluan = TextEditingController();
+  final TextEditingController dateBerangkat = TextEditingController();
+  final TextEditingController datePulang = TextEditingController();
+  final TextEditingController nrppegawai = TextEditingController();
+  final TextEditingController uangsaku = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    kotaasal.dispose();
+    kotatujuan.dispose();
+    keperluan.dispose();
+    dateBerangkat.dispose();
+    datePulang.dispose();
+    nrppegawai.dispose();
+    uangsaku.dispose();
+    super.dispose();
+  }
 
   String _baseUrl = "http://libra.akhdani.net:54125/api/master/pegawai/list";
   String _baseUrl2 = "http://libra.akhdani.net:54125/api/master/lokasi/list";
   String _valPegawai = '';
+  String _valPegawainrp = '';
   String _valLokasi = '';
   String _valLokasiId = '';
   String _valLokasiProv = '';
@@ -36,6 +55,47 @@ class _MyPerdinBaru extends State<PerdinBaru> {
   List<dynamic> _dataLokasi = List.empty();
   List<dynamic> _dataLokasi2 = List.empty();
 
+  //POSt DATA PERDIN
+  void postperdin(
+      String nrp,
+      lokasi_id_asal,
+      lokasi_id_tujuan,
+      jarak,
+      tanggal_berangkat,
+      tanggal_pulang,
+      lama_hari,
+      maksud,
+      uang_saku,
+      create_by_user_id) async {
+    try {
+      Response response = await post(
+          Uri.parse("http://libra.akhdani.net:54125/api/trx/perdin/"),
+          body: {
+            'nrp': nrp,
+            'lokasi_id_asal': lokasi_id_asal,
+            'lokasi_id_tujuan': lokasi_id_tujuan,
+            'jarak': jarak,
+            'tanggal_berangkat': tanggal_berangkat,
+            'tanggal_pulang': tanggal_pulang,
+            'lama_hari': lama_hari,
+            'maksud': maksud,
+            'uang_saku': uang_saku,
+            'created_by_user_id': create_by_user_id
+          });
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        print(response.statusCode);
+        print("Berhasil ditambahkan");
+      } else {
+        print(response.statusCode);
+        print("Gagal ditambahkan");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   //GET DATA LOKASI ASAL
   void getLokasiApi1(String id) async {
     try {
@@ -45,13 +105,13 @@ class _MyPerdinBaru extends State<PerdinBaru> {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         final pref = await SharedPreferences.getInstance();
-        print('berhasil');
+        //  print('berhasil');
 
         await pref.setString('provinsi', data["provinsi"]);
         await pref.setString('lon1', data["lon"]);
         await pref.setString('lat1', data["lat"]);
       } else {
-        print("tidak bisa");
+        //  print("tidak bisa");
       }
     } catch (e) {
       print(e.toString());
@@ -67,13 +127,13 @@ class _MyPerdinBaru extends State<PerdinBaru> {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         final pref = await SharedPreferences.getInstance();
-        print('berhasil');
+        // print('berhasil');
 
         await pref.setString('provinsi2', data["provinsi"]);
         await pref.setString('lon2', data["lon"]);
         await pref.setString('lat2', data["lat"]);
       } else {
-        print("tidak bisa");
+        //  print("tidak bisa");
       }
     } catch (e) {
       print(e.toString());
@@ -86,7 +146,8 @@ class _MyPerdinBaru extends State<PerdinBaru> {
     var lisData = jsonDecode(response.body);
     setState(() {
       _dataPegawai = lisData["data"];
-      _valPegawai = _dataPegawai.first['nama'];
+      _valPegawai = _dataPegawai.first["nama"];
+      _valPegawainrp = _dataPegawai.first["nrp"];
     });
     print("data : $lisData");
   }
@@ -151,16 +212,17 @@ class _MyPerdinBaru extends State<PerdinBaru> {
             menuMaxHeight: 600,
             borderRadius: BorderRadius.circular(20),
             hint: Text("Pilih Pegawai"),
-            value: _valPegawai,
+            value: _valPegawainrp,
             items: _dataPegawai.map<DropdownMenuItem<String>>((item) {
               return DropdownMenuItem<String>(
                 child: Text(item['nama']),
-                value: item['nama'],
+                value: item['nrp'],
               );
             }).toList(),
             onChanged: (value) {
               setState(() {
-                _valPegawai = value.toString();
+                _valPegawainrp = value.toString();
+                print("nrp Pegawai " + _valPegawainrp.toString());
               });
             },
           ),
@@ -251,8 +313,11 @@ class _MyPerdinBaru extends State<PerdinBaru> {
         Container(
           padding: EdgeInsets.only(top: 10, right: 20),
           child: Center(
-              child: TextField(
+              child: TextFormField(
             controller: dateBerangkat,
+            onSaved: (String? val) {
+              dateBerangkat.text = val!;
+            },
             decoration: InputDecoration(
               icon: Icon(Icons.calendar_today),
               labelText: "Masukkan Tanggal",
@@ -292,8 +357,11 @@ class _MyPerdinBaru extends State<PerdinBaru> {
         Container(
           padding: EdgeInsets.only(top: 10, right: 20),
           child: Center(
-              child: TextField(
+              child: TextFormField(
             controller: datePulang,
+            onSaved: (String? val) {
+              datePulang.text = val!;
+            },
             decoration: InputDecoration(
                 icon: Icon(Icons.calendar_today),
                 labelText: "Masukkan Tanggal"),
@@ -328,7 +396,7 @@ class _MyPerdinBaru extends State<PerdinBaru> {
                 fontSize: 16),
           ),
         ),
-        //BUTTON SUBMIT
+        //KEPERLUAN
         Container(
           padding: const EdgeInsets.only(top: 10, right: 20),
           child: TextFormField(
@@ -351,6 +419,7 @@ class _MyPerdinBaru extends State<PerdinBaru> {
         SizedBox(
           height: 20,
         ),
+        //BUTTON SUBMIT
         TextButton(
           style: TextButton.styleFrom(backgroundColor: Colors.blue),
           onPressed: () async {
@@ -359,6 +428,7 @@ class _MyPerdinBaru extends State<PerdinBaru> {
             getLokasiApi2(_valLokasiId2);
 
             final prefs = await SharedPreferences.getInstance();
+
             final String? lon = prefs.getString('lon1');
             final String? lat = prefs.getString('lat1');
             //  print("Longitude pada lokasi 1 adalah " + lon.toString());
@@ -403,15 +473,38 @@ class _MyPerdinBaru extends State<PerdinBaru> {
 
             //MENGHITUNG UANG SAKU
 
-            var uangsaku = 0;
+            var uangsakus = 0;
 
             if (jarak < 60) {
-              uangsaku = i * 0;
+              uangsakus = i * 0;
             } else {
-              uangsaku = i * 100000;
+              uangsakus = i * 100000;
             }
 
-            print(uangsaku);
+            print(uangsakus);
+            // var rng = new Random().nextInt(10);
+            // var l = Random().nextInt(100) + 50;
+            //   print("Random" + l.toString());
+            print(keperluan.text);
+            print(_valLokasiId);
+            print(dateBerangkat.text);
+            String db = dateBerangkat.text;
+            String dp = datePulang.text;
+            String k = keperluan.text;
+            postperdin(
+                _valPegawainrp.toString(),
+                _valLokasiId.toString(),
+                _valLokasiId2.toString(),
+                jarak.toString(),
+                db.toString(),
+                dp.toString(),
+                i.toString(),
+                k.toString(),
+                uangsakus.toString(),
+                '1');
+
+            Navigator.push(context,
+                new MaterialPageRoute(builder: (context) => new Dashboard()));
           },
           child: Text(
             'Simpan',
@@ -422,24 +515,24 @@ class _MyPerdinBaru extends State<PerdinBaru> {
     );
     //SCAFFOLD
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(context,
+                new MaterialPageRoute(builder: (context) => new Dashboard()));
+          },
+          icon: Icon(Icons.arrow_back_ios),
+        ),
+        title: Text(
+          "Tambah Data Perdin Baru",
+          style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w700),
+        ),
+      ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 60, left: 20),
+        padding: const EdgeInsets.only(top: 10, left: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                child: Text(
-                  "Tambah Data Perdin Baru",
-                  style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 24),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
             inputdata,
           ],
         ),

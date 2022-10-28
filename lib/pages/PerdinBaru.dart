@@ -435,6 +435,7 @@ class _MyPerdinBaru extends State<PerdinBaru> {
             //  print("Latitude pada lokasi 1 adalah " + lat.toString());
             final String? lon2 = prefs.getString('lon2');
             final String? lat2 = prefs.getString('lat2');
+            final String? ids = prefs.getString('id');
             //  print("Longitude pada lokasi 2 adalah " + lon2.toString());
             //  print("Latitude pada lokasi 2 adalah " + lat2.toString());
 
@@ -501,7 +502,7 @@ class _MyPerdinBaru extends State<PerdinBaru> {
                 i.toString(),
                 k.toString(),
                 uangsakus.toString(),
-                '1');
+                ids.toString());
 
             Navigator.push(context,
                 new MaterialPageRoute(builder: (context) => new Dashboard()));

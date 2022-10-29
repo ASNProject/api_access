@@ -198,17 +198,17 @@ class _MyDashboard extends State<Dashboard> {
                                   icon: Icon(Icons.edit),
                                 ),
                               ),
-                              Container(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      deleteperdin(
-                                          (users[index].id).toString());
-                                      print(users[index].id);
-                                    },
-                                    icon: Icon(Icons.delete),
-                                    color: Colors.red,
-                                  )),
+                              /* Container(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: IconButton(
+                                  onPressed: () {
+                                    deleteperdin((users[index].id).toString());
+                                    print(users[index].id);
+                                  },
+                                  icon: Icon(Icons.delete),
+                                  color: Colors.red,
+                                ),
+                              ), */
                             ],
                           ),
                           Column(

@@ -1,4 +1,5 @@
 import 'package:api_access/model/perdin_model.dart';
+import 'package:api_access/pages/Edit_Perdin.dart';
 import 'package:api_access/pages/PerdinBaru.dart';
 import 'package:api_access/pages/Register.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,37 @@ class _MyDashboard extends State<Dashboard> {
         print(response.statusCode);
       } else {
         print("Gagal hapus");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void editperdin(String id) async {
+    try {
+      Response response = await get(
+        Uri.parse("http://libra.akhdani.net:54125/api/trx/perdin/" + id),
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        print("IDnya adalah" + id);
+        print("Berhasil ambil data");
+        final pref = await SharedPreferences.getInstance();
+
+        await pref.setString('edit_nama_pegawai', data["nrp"].toString());
+        await pref.setString(
+            'edit_kota_asal', data["lokasi_id_asal"].toString());
+        await pref.setString(
+            'edit_kota_tujuan', data["lokasi_id_tujuan"].toString());
+        await pref.setString(
+            'edit_tanggal_berangkat', data["tanggal_berangkat"].toString());
+        await pref.setString(
+            "edit_tanggal_pulang", data["tanggal_pulang"].toString());
+        await pref.setString(
+            "edit_keperluan", data["edit_keperluan"].toString());
+      } else {
+        print("Gagal ambil data");
       }
     } catch (e) {
       print(e.toString());
@@ -194,11 +226,21 @@ class _MyDashboard extends State<Dashboard> {
                               Container(
                                 padding: const EdgeInsets.only(right: 0),
                                 child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    //   editperdin(users[index].id.toString());
+                                    Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                            builder: (context) =>
+                                                new EditPerdin()));
+                                    editperdin(users[index].id.toString());
+                                    print("ID for edit adalah " +
+                                        users[index].id.toString());
+                                  },
                                   icon: Icon(Icons.edit),
                                 ),
                               ),
-                              /* Container(
+                              Container(
                                 padding: const EdgeInsets.only(right: 10),
                                 child: IconButton(
                                   onPressed: () {
@@ -208,7 +250,7 @@ class _MyDashboard extends State<Dashboard> {
                                   icon: Icon(Icons.delete),
                                   color: Colors.red,
                                 ),
-                              ), */
+                              ),
                             ],
                           ),
                           Column(

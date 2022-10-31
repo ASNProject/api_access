@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:api_access/pages/Dashboard.dart';
 import 'package:api_access/pages/PerdinBaru.dart';
+import 'package:api_access/pages/Edit_Perdin.dart';
 
 import './model/get_model.dart';
 
@@ -16,7 +17,8 @@ void main() {
       'register': (context) => MyRegister(),
       'login': (context) => MyLogin(),
       'dashboard': (context) => Dashboard(),
-      'perdinbaru': (context) => PerdinBaru()
+      'perdinbaru': (context) => PerdinBaru(),
+      'editperdin': (context) => EditPerdin()
     },
   ));
   //runApp(MyApp());

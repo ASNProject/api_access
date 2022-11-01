@@ -516,7 +516,7 @@ class _MyPerdinBaru extends State<PerdinBaru> {
             String db = dateBerangkat.text;
             String dp = datePulang.text;
             String k = keperluan.text;
-            postperdin(
+            /* postperdin(
                 _valPegawainrp.toString(),
                 _valLokasiId.toString(),
                 _valLokasiId2.toString(),
@@ -527,7 +527,7 @@ class _MyPerdinBaru extends State<PerdinBaru> {
                 k.toString(),
                 uangsakus.toString(),
                 ids.toString());
-
+                */
             Navigator.push(context,
                 new MaterialPageRoute(builder: (context) => new Dashboard()));
           },

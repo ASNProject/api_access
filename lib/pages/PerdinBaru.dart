@@ -2,6 +2,7 @@ import 'dart:math' as Math;
 import 'dart:math';
 
 import 'package:api_access/pages/Register.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,7 +43,7 @@ class _MyPerdinBaru extends State<PerdinBaru> {
   }
 
   String _baseUrl = "http://libra.akhdani.net:54125/api/master/pegawai/list";
-  String _baseUrl2 = "http://libra.akhdani.net:54125/api/master/lokasi/list";
+  String _baseUrl2 = "http://libra.akhdani.net:54125/api/master/lokasi/list?";
   String _valPegawai = '';
   String _valPegawainrp = '';
   String _valLokasi = '';
@@ -55,6 +56,13 @@ class _MyPerdinBaru extends State<PerdinBaru> {
   List<dynamic> _dataLokasi = List.empty();
   List<dynamic> _dataLokasi2 = List.empty();
 
+  List _get = [];
+  String nama_pegawai = '';
+  String kodenrp = '';
+  String kota_asal = '';
+  String id_kotaasal = '';
+  String kota_tujuan = '';
+  String id_kotatujuan = '';
   //POSt DATA PERDIN
   void postperdin(
       String nrp,
@@ -208,24 +216,29 @@ class _MyPerdinBaru extends State<PerdinBaru> {
         //DROPDOWN PEGAWAI
         Container(
           padding: const EdgeInsets.only(right: 20),
-          child: DropdownButton(
-            isExpanded: true,
-            menuMaxHeight: 600,
-            borderRadius: BorderRadius.circular(20),
-            hint: Text("Pilih Pegawai"),
-            value: _valPegawainrp,
-            items: _dataPegawai.map<DropdownMenuItem<String>>((item) {
-              return DropdownMenuItem<String>(
-                child: Text(item['nama']),
-                value: item['nrp'],
-              );
-            }).toList(),
+          child: DropdownSearch<dynamic>(
+            dropdownSearchDecoration:
+                InputDecoration(hintText: "Pilih nama pegawai"),
+            mode: Mode.MENU,
+            showSearchBox: true,
+            onFind: (text) async {
+              var response = await http.get(Uri.parse(_baseUrl));
+              if (response.statusCode == 200) {
+                final data = jsonDecode(response.body);
+
+                setState(() {
+                  _get = data['data'];
+                });
+              }
+              return _get as List<dynamic>;
+            },
             onChanged: (value) {
               setState(() {
-                _valPegawainrp = value.toString();
-                print("nrp Pegawai " + _valPegawainrp.toString());
+                nama_pegawai = value['nama'];
+                kodenrp = value['nrp'];
               });
             },
+            itemAsString: ((item) => item['nama']),
           ),
         ),
         //TEXT KOTA ASAL
@@ -240,29 +253,34 @@ class _MyPerdinBaru extends State<PerdinBaru> {
                 fontSize: 16),
           ),
         ),
-        //DROPDOWN KOTA ASAL
         Container(
           padding: const EdgeInsets.only(right: 20),
-          child: DropdownButton(
-            isExpanded: true,
-            menuMaxHeight: 600,
-            borderRadius: BorderRadius.circular(20),
-            hint: Text("Pilih Kota Asal"),
-            value: _valLokasiId,
-            items: _dataLokasi.map<DropdownMenuItem<String>>((item) {
-              return DropdownMenuItem<String>(
-                child: Text(item['nama']),
-                value: item['id'],
-              );
-            }).toList(),
-            onChanged: (value) async {
+          child: DropdownSearch<dynamic>(
+            dropdownSearchDecoration:
+                InputDecoration(hintText: "Pilih kota asal"),
+            mode: Mode.MENU,
+            showSearchBox: true,
+            onFind: (text) async {
+              var response = await http.get(Uri.parse(_baseUrl2));
+              if (response.statusCode == 200) {
+                final data = jsonDecode(response.body);
+
+                setState(() {
+                  _get = data['data'];
+                });
+              }
+              return _get as List<dynamic>;
+            },
+            onChanged: (value) {
               setState(() {
-                _valLokasiId = value.toString();
-                print("ID Asal " + _valLokasiId);
+                kota_asal = value['nama'];
+                id_kotatujuan = value['id'];
               });
             },
+            itemAsString: ((item) => item['nama']),
           ),
         ),
+
         //TEXT KOTA TUJUAN
         Container(
           alignment: Alignment.centerLeft,
@@ -278,24 +296,29 @@ class _MyPerdinBaru extends State<PerdinBaru> {
         //DROPDOWN KOTA TUJUAN
         Container(
           padding: const EdgeInsets.only(right: 20),
-          child: DropdownButton(
-            isExpanded: true,
-            menuMaxHeight: 600,
-            borderRadius: BorderRadius.circular(20),
-            hint: Text("Pilih Kota Tujuan"),
-            value: _valLokasiId2,
-            items: _dataLokasi2.map<DropdownMenuItem<String>>((item) {
-              return DropdownMenuItem<String>(
-                child: Text(item['nama']),
-                value: item['id'],
-              );
-            }).toList(),
+          child: DropdownSearch<dynamic>(
+            dropdownSearchDecoration:
+                InputDecoration(hintText: "Pilih kota tujuan"),
+            mode: Mode.MENU,
+            showSearchBox: true,
+            onFind: (text) async {
+              var response = await http.get(Uri.parse(_baseUrl2));
+              if (response.statusCode == 200) {
+                final data = jsonDecode(response.body);
+
+                setState(() {
+                  _get = data['data'];
+                });
+              }
+              return _get as List<dynamic>;
+            },
             onChanged: (value) {
               setState(() {
-                _valLokasiId2 = value.toString();
-                print("ID Tujuan " + _valLokasiId2);
+                kota_tujuan = value['nama'];
+                id_kotatujuan = value['id'];
               });
             },
+            itemAsString: ((item) => item['nama']),
           ),
         ),
         //TEXT TANGGAL BERANGKAT

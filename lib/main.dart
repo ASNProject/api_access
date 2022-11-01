@@ -13,7 +13,7 @@ import './model/get_model.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: Test(),
+    home: PerdinBaru(),
     routes: {
       'register': (context) => MyRegister(),
       'login': (context) => MyLogin(),

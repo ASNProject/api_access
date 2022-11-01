@@ -21,6 +21,7 @@ class PerdinBaru extends StatefulWidget {
 }
 
 class _MyPerdinBaru extends State<PerdinBaru> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController kotaasal = TextEditingController();
   final TextEditingController kotatujuan = TextEditingController();
   final TextEditingController keperluan = TextEditingController();
@@ -43,7 +44,7 @@ class _MyPerdinBaru extends State<PerdinBaru> {
   }
 
   String _baseUrl = "http://libra.akhdani.net:54125/api/master/pegawai/list";
-  String _baseUrl2 = "http://libra.akhdani.net:54125/api/master/lokasi/list?";
+  String _baseUrl2 = "http://libra.akhdani.net:54125/api/master/lokasi/list";
   String _valPegawai = '';
   String _valPegawainrp = '';
   String _valLokasi = '';
@@ -199,324 +200,367 @@ class _MyPerdinBaru extends State<PerdinBaru> {
 
   @override
   Widget build(BuildContext context) {
-    Widget inputdata = Column(
-      children: [
-        //TEXT NAMA
-        Container(
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(top: 20),
-          child: Text(
-            "Nama",
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 16),
-          ),
-        ),
-        //DROPDOWN PEGAWAI
-        Container(
-          padding: const EdgeInsets.only(right: 20),
-          child: DropdownSearch<dynamic>(
-            dropdownSearchDecoration:
-                InputDecoration(hintText: "Pilih nama pegawai"),
-            mode: Mode.MENU,
-            showSearchBox: true,
-            onFind: (text) async {
-              var response = await http.get(Uri.parse(_baseUrl));
-              if (response.statusCode == 200) {
-                final data = jsonDecode(response.body);
-
-                setState(() {
-                  _get = data['data'];
-                });
-              }
-              return _get as List<dynamic>;
-            },
-            onChanged: (value) {
-              setState(() {
-                nama_pegawai = value['nama'];
-                kodenrp = value['nrp'];
-              });
-            },
-            itemAsString: ((item) => item['nama']),
-          ),
-        ),
-        //TEXT KOTA ASAL
-        Container(
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(top: 10),
-          child: Text(
-            "Kota Asal",
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 16),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.only(right: 20),
-          child: DropdownSearch<dynamic>(
-            dropdownSearchDecoration:
-                InputDecoration(hintText: "Pilih kota asal"),
-            mode: Mode.MENU,
-            showSearchBox: true,
-            onFind: (text) async {
-              var response = await http.get(Uri.parse(_baseUrl2));
-              if (response.statusCode == 200) {
-                final data = jsonDecode(response.body);
-
-                setState(() {
-                  _get = data['data'];
-                });
-              }
-              return _get as List<dynamic>;
-            },
-            onChanged: (value) {
-              setState(() {
-                kota_asal = value['nama'];
-                id_kotatujuan = value['id'];
-              });
-            },
-            itemAsString: ((item) => item['nama']),
-          ),
-        ),
-
-        //TEXT KOTA TUJUAN
-        Container(
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(top: 10),
-          child: Text(
-            "Kota Tujuan",
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 16),
-          ),
-        ),
-        //DROPDOWN KOTA TUJUAN
-        Container(
-          padding: const EdgeInsets.only(right: 20),
-          child: DropdownSearch<dynamic>(
-            dropdownSearchDecoration:
-                InputDecoration(hintText: "Pilih kota tujuan"),
-            mode: Mode.MENU,
-            showSearchBox: true,
-            onFind: (text) async {
-              var response = await http.get(Uri.parse(_baseUrl2));
-              if (response.statusCode == 200) {
-                final data = jsonDecode(response.body);
-
-                setState(() {
-                  _get = data['data'];
-                });
-              }
-              return _get as List<dynamic>;
-            },
-            onChanged: (value) {
-              setState(() {
-                kota_tujuan = value['nama'];
-                id_kotatujuan = value['id'];
-              });
-            },
-            itemAsString: ((item) => item['nama']),
-          ),
-        ),
-        //TEXT TANGGAL BERANGKAT
-        Container(
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(top: 10),
-          child: Text(
-            "Tanggal Berangkat",
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 16),
-          ),
-        ),
-        //SET TANGGAL BERANGKAT
-        Container(
-          padding: EdgeInsets.only(top: 10, right: 20),
-          child: Center(
-              child: TextFormField(
-            controller: dateBerangkat,
-            onSaved: (String? val) {
-              dateBerangkat.text = val!;
-            },
-            decoration: InputDecoration(
-              icon: Icon(Icons.calendar_today),
-              labelText: "Masukkan Tanggal",
+    Widget inputdata = Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          //TEXT NAMA
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(top: 20),
+            child: Text(
+              "Nama",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16),
             ),
-            readOnly: true,
-            onTap: () async {
-              DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  firstDate: DateTime(2022),
-                  lastDate: DateTime(2100),
-                  initialDate: DateTime.now());
-              if (pickedDate != null) {
-                //  print(pickedDate);
-                String formattedDate =
-                    DateFormat('yyyy-MM-dd').format(pickedDate);
-                print(formattedDate);
-                setState(() {
-                  dateBerangkat.text = formattedDate;
-                });
-              } else {}
-            },
-          )),
-        ),
-        //TEXT TANGGAL PULANG
-        Container(
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(top: 10),
-          child: Text(
-            "Tanggal Pulang",
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 16),
           ),
-        ),
-        //SET TANGGAL PULANG
-        Container(
-          padding: EdgeInsets.only(top: 10, right: 20),
-          child: Center(
-              child: TextFormField(
-            controller: datePulang,
-            onSaved: (String? val) {
-              datePulang.text = val!;
-            },
-            decoration: InputDecoration(
+          //DROPDOWN PEGAWAI
+          Container(
+            padding: const EdgeInsets.only(right: 20),
+            child: DropdownSearch<dynamic>(
+              dropdownSearchDecoration:
+                  InputDecoration(hintText: "Pilih nama pegawai"),
+              mode: Mode.MENU,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Mohon masukkan nama pegawai';
+                }
+                return null;
+              },
+              showSearchBox: true,
+              onFind: (text) async {
+                var response = await http.get(Uri.parse(_baseUrl));
+                if (response.statusCode == 200) {
+                  final data = jsonDecode(response.body);
+
+                  setState(() {
+                    _get = data['data'];
+                  });
+                }
+                return _get as List<dynamic>;
+              },
+              onChanged: (value) {
+                setState(() {
+                  nama_pegawai = value['nama'];
+                  kodenrp = value['nrp'];
+                  // print("nama pegawai yang dipilih " + nama_pegawai.toString());
+                  //  print("kodenrp yang dilipih " + kodenrp.toString());
+                });
+              },
+              itemAsString: ((item) => item['nama']),
+            ),
+          ),
+          //TEXT KOTA ASAL
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(top: 10),
+            child: Text(
+              "Kota Asal",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(right: 20),
+            child: DropdownSearch<dynamic>(
+              dropdownSearchDecoration:
+                  InputDecoration(hintText: "Pilih kota asal"),
+              mode: Mode.MENU,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Mohon pilih kota asal';
+                }
+                return null;
+              },
+              showSearchBox: true,
+              onFind: (text) async {
+                var response = await http.get(Uri.parse(_baseUrl2));
+                if (response.statusCode == 200) {
+                  final data = jsonDecode(response.body);
+
+                  setState(() {
+                    _get = data['data'];
+                  });
+                }
+                return _get as List<dynamic>;
+              },
+              onChanged: (value) {
+                setState(() {
+                  kota_asal = value['nama'];
+                  id_kotaasal = value['id'];
+                  //   print("kota asal yang dipilih " + kota_asal.toString());
+                  //   print("id kota asal yang dipilih " + id_kotaasal.toString());
+                });
+              },
+              itemAsString: ((item) => item['nama']),
+            ),
+          ),
+
+          //TEXT KOTA TUJUAN
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(top: 10),
+            child: Text(
+              "Kota Tujuan",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16),
+            ),
+          ),
+          //DROPDOWN KOTA TUJUAN
+          Container(
+            padding: const EdgeInsets.only(right: 20),
+            child: DropdownSearch<dynamic>(
+              dropdownSearchDecoration:
+                  InputDecoration(hintText: "Pilih kota tujuan"),
+              mode: Mode.MENU,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Mohon pilih kota tujuan';
+                }
+                return null;
+              },
+              showSearchBox: true,
+              onFind: (text) async {
+                var response = await http.get(Uri.parse(_baseUrl2));
+                if (response.statusCode == 200) {
+                  final data = jsonDecode(response.body);
+
+                  setState(() {
+                    _get = data['data'];
+                  });
+                }
+                return _get as List<dynamic>;
+              },
+              onChanged: (value) {
+                setState(() {
+                  kota_tujuan = value['nama'];
+                  id_kotatujuan = value['id'];
+                });
+              },
+              itemAsString: ((item) => item['nama']),
+            ),
+          ),
+          //TEXT TANGGAL BERANGKAT
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(top: 10),
+            child: Text(
+              "Tanggal Berangkat",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16),
+            ),
+          ),
+          //SET TANGGAL BERANGKAT
+          Container(
+            padding: EdgeInsets.only(top: 10, right: 20),
+            child: Center(
+                child: TextFormField(
+              controller: dateBerangkat,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Mohon masukkan tanggal keberangkatan';
+                }
+                return null;
+              },
+              onSaved: (String? val) {
+                dateBerangkat.text = val!;
+              },
+              decoration: InputDecoration(
                 icon: Icon(Icons.calendar_today),
-                labelText: "Masukkan Tanggal"),
-            readOnly: true,
-            onTap: () async {
-              DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  firstDate: DateTime(2022),
-                  lastDate: DateTime(2100),
-                  initialDate: DateTime.now());
-              if (pickedDate != null) {
-                print(pickedDate);
-                String formattedDate =
-                    DateFormat('yyyy-MM-dd').format(pickedDate);
-                print(formattedDate);
-                setState(() {
-                  datePulang.text = formattedDate;
-                });
-              } else {}
-            },
-          )),
-        ),
-        //KEPERLUAN
-        Container(
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(top: 10),
-          child: Text(
-            "Keperluan",
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 16),
+                labelText: "Masukkan Tanggal",
+              ),
+              readOnly: true,
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    firstDate: DateTime(2022),
+                    lastDate: DateTime(2100),
+                    initialDate: DateTime.now());
+                if (pickedDate != null) {
+                  //  print(pickedDate);
+                  String formattedDate =
+                      DateFormat('yyyy-MM-dd').format(pickedDate);
+                  print(formattedDate);
+                  setState(() {
+                    dateBerangkat.text = formattedDate;
+                  });
+                } else {}
+              },
+            )),
           ),
-        ),
-        //KEPERLUAN
-        Container(
-          padding: const EdgeInsets.only(top: 10, right: 20),
-          child: TextFormField(
-            minLines: 2,
-            controller: keperluan,
-            onSaved: (String? val) {
-              keperluan.text = val!;
-            },
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
-            decoration: InputDecoration(
-                fillColor: Colors.grey.shade100,
-                filled: true,
-                hintText: "Tuliskan keperluan perjalanan dinas ...",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                )),
+          //TEXT TANGGAL PULANG
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(top: 10),
+            child: Text(
+              "Tanggal Pulang",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16),
+            ),
           ),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        //BUTTON SUBMIT
-        TextButton(
-          style: TextButton.styleFrom(backgroundColor: Colors.blue),
-          onPressed: () async {
-            //MENGHITUNG JARAK
-            getLokasiApi1(_valLokasiId);
-            getLokasiApi2(_valLokasiId2);
+          //SET TANGGAL PULANG
+          Container(
+            padding: EdgeInsets.only(top: 10, right: 20),
+            child: Center(
+                child: TextFormField(
+              controller: datePulang,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Mohon masukkan tanggal pulang';
+                }
+                return null;
+              },
+              onSaved: (String? val) {
+                datePulang.text = val!;
+              },
+              decoration: InputDecoration(
+                  icon: Icon(Icons.calendar_today),
+                  labelText: "Masukkan Tanggal"),
+              readOnly: true,
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    firstDate: DateTime(2022),
+                    lastDate: DateTime(2100),
+                    initialDate: DateTime.now());
+                if (pickedDate != null) {
+                  print(pickedDate);
+                  String formattedDate =
+                      DateFormat('yyyy-MM-dd').format(pickedDate);
 
-            final prefs = await SharedPreferences.getInstance();
+                  print(formattedDate);
+                  setState(() {
+                    datePulang.text = formattedDate;
+                  });
+                } else {}
+              },
+            )),
+          ),
+          //KEPERLUAN
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(top: 10),
+            child: Text(
+              "Keperluan",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16),
+            ),
+          ),
+          //KEPERLUAN
+          Container(
+            padding: const EdgeInsets.only(top: 10, right: 20),
+            child: TextFormField(
+              minLines: 2,
+              controller: keperluan,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Masukkan keperluan perjalanan dinas';
+                }
+                return null;
+              },
+              onSaved: (String? val) {
+                keperluan.text = val!;
+              },
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: InputDecoration(
+                  fillColor: Colors.grey.shade100,
+                  filled: true,
+                  hintText: "Tuliskan keperluan perjalanan dinas ...",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  )),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          //BUTTON SUBMIT
+          TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.blue),
+            onPressed: () async {
+              //MENGHITUNG JARAK
+              getLokasiApi1(id_kotaasal);
+              getLokasiApi2(id_kotatujuan);
 
-            final String? lon = prefs.getString('lon1');
-            final String? lat = prefs.getString('lat1');
-            //  print("Longitude pada lokasi 1 adalah " + lon.toString());
-            //  print("Latitude pada lokasi 1 adalah " + lat.toString());
-            final String? lon2 = prefs.getString('lon2');
-            final String? lat2 = prefs.getString('lat2');
-            final String? ids = prefs.getString('id');
-            //  print("Longitude pada lokasi 2 adalah " + lon2.toString());
-            //  print("Latitude pada lokasi 2 adalah " + lat2.toString());
+              final prefs = await SharedPreferences.getInstance();
 
-            var lonA = double.parse('$lon');
-            var latA = double.parse('$lat');
-            var lonB = double.parse('$lon2');
-            var latB = double.parse('$lat2');
+              final String? lon = prefs.getString('lon1');
+              final String? lat = prefs.getString('lat1');
+              //  print("Longitude pada lokasi 1 adalah " + lon.toString());
+              //  print("Latitude pada lokasi 1 adalah " + lat.toString());
+              final String? lon2 = prefs.getString('lon2');
+              final String? lat2 = prefs.getString('lat2');
+              final String? ids = prefs.getString('id');
+              //  print("Longitude pada lokasi 2 adalah " + lon2.toString());
+              //  print("Latitude pada lokasi 2 adalah " + lat2.toString());
 
-            double deg2rad(deg) {
-              return deg * (Math.pi / 180);
-            }
+              var lonA = double.parse('$lon');
+              var latA = double.parse('$lat');
+              var lonB = double.parse('$lon2');
+              var latB = double.parse('$lat2');
 
-            var R = 6371; //Radius bumi dalam kilometer
-            var dLat = deg2rad(latB - latA);
-            var dLon = deg2rad(lonB - lonA);
-            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(deg2rad(latA)) *
-                    Math.cos(deg2rad(latB)) *
-                    Math.sin(dLon / 2) *
-                    Math.sin(dLon / 2);
-            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            var d = R * c; //Menghitung Jarak dalam Km
+              double deg2rad(deg) {
+                return deg * (Math.pi / 180);
+              }
 
-            int jarak = d.toInt();
+              var R = 6371; //Radius bumi dalam kilometer
+              var dLat = deg2rad(latB - latA);
+              var dLon = deg2rad(lonB - lonA);
+              var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(deg2rad(latA)) *
+                      Math.cos(deg2rad(latB)) *
+                      Math.sin(dLon / 2) *
+                      Math.sin(dLon / 2);
+              var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+              var d = R * c; //Menghitung Jarak dalam Km
 
-            print("Jarak= " + jarak.toString());
+              int jarak = d.toInt();
 
-            //MENGHITUNG JUMLAH HARI
+              print("Jarak= " + jarak.toString());
 
-            DateTime dt1 = DateTime.parse(dateBerangkat.text);
-            DateTime dt2 = DateTime.parse(datePulang.text);
+              //MENGHITUNG JUMLAH HARI
 
-            Duration diff = dt2.difference(dt1);
-            var i = diff.inDays + 1;
-            print("Jumlah hari = " + i.toString());
+              DateTime dt1 = DateTime.parse(dateBerangkat.text);
+              DateTime dt2 = DateTime.parse(datePulang.text);
 
-            //MENGHITUNG UANG SAKU
+              Duration diff = dt2.difference(dt1);
+              var i = diff.inDays + 1;
+              print("Jumlah hari = " + i.toString());
 
-            var uangsakus = 0;
+              //MENGHITUNG UANG SAKU
 
-            if (jarak < 60) {
-              uangsakus = i * 0;
-            } else {
-              uangsakus = i * 100000;
-            }
+              var uangsakus = 0;
 
-            print(uangsakus);
-            // var rng = new Random().nextInt(10);
-            // var l = Random().nextInt(100) + 50;
-            //   print("Random" + l.toString());
-            print(keperluan.text);
-            print(_valLokasiId);
-            print(dateBerangkat.text);
-            String db = dateBerangkat.text;
-            String dp = datePulang.text;
-            String k = keperluan.text;
-            /* postperdin(
+              if (jarak < 60) {
+                uangsakus = i * 0;
+              } else {
+                uangsakus = i * 100000;
+              }
+
+              print(uangsakus);
+              // var rng = new Random().nextInt(10);
+              // var l = Random().nextInt(100) + 50;
+              //   print("Random" + l.toString());
+              print(keperluan.text);
+              print(_valLokasiId);
+              print(dateBerangkat.text);
+              String db = dateBerangkat.text;
+              String dp = datePulang.text;
+              String k = keperluan.text;
+              /* postperdin(
                 _valPegawainrp.toString(),
                 _valLokasiId.toString(),
                 _valLokasiId2.toString(),
@@ -527,18 +571,26 @@ class _MyPerdinBaru extends State<PerdinBaru> {
                 k.toString(),
                 uangsakus.toString(),
                 ids.toString());
-                */
+                
             Navigator.push(context,
                 new MaterialPageRoute(builder: (context) => new Dashboard()));
-          },
-          child: Text(
-            'Simpan',
-            style: TextStyle(color: Colors.white, fontFamily: 'Poppins'),
+                */
+
+              if (_formKey.currentState!.validate()) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Processing Data')),
+                );
+              }
+            },
+            child: Text(
+              'Simpan',
+              style: TextStyle(color: Colors.white, fontFamily: 'Poppins'),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
-    //SCAFFOLD
+    //SCAFFOLD)
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(

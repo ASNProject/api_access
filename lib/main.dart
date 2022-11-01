@@ -1,6 +1,7 @@
 import 'package:api_access/pages/Login.dart';
 import 'package:api_access/pages/Register.dart';
 import 'package:api_access/pages/test.dart';
+import 'package:api_access/pages/testDropdownSearch.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:api_access/pages/Dashboard.dart';
@@ -12,13 +13,14 @@ import './model/get_model.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: Dashboard(),
+    home: Test(),
     routes: {
       'register': (context) => MyRegister(),
       'login': (context) => MyLogin(),
       'dashboard': (context) => Dashboard(),
       'perdinbaru': (context) => PerdinBaru(),
-      'editperdin': (context) => EditPerdin()
+      'editperdin': (context) => EditPerdin(),
+      'test': ((context) => Test())
     },
   ));
   //runApp(MyApp());

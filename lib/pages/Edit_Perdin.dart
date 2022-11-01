@@ -22,12 +22,14 @@ class EditPerdin extends StatefulWidget {
 class _MyPerdinBaru extends State<EditPerdin> {
   final TextEditingController kotaasal = TextEditingController();
   final TextEditingController kotatujuan = TextEditingController();
-  final TextEditingController keperluan = TextEditingController();
-  final TextEditingController dateBerangkat = TextEditingController();
-  final TextEditingController datePulang = TextEditingController();
+  late TextEditingController keperluan = TextEditingController();
+  late TextEditingController dateBerangkat = TextEditingController();
+  late TextEditingController datePulang = TextEditingController();
   final TextEditingController nrppegawai = TextEditingController();
   final TextEditingController uangsaku = TextEditingController();
   final TextEditingController test = TextEditingController();
+
+  SharedPreferences? preferences;
 
   @override
   void dispose() {
@@ -99,16 +101,18 @@ class _MyPerdinBaru extends State<EditPerdin> {
   }
 
   String nama = '';
-  Future<String?> readData() async {
-    final pref = await SharedPreferences.getInstance();
+  Future<void> readData() async {
+    this.preferences = await SharedPreferences.getInstance();
 
-    String? nama = pref.getString('edit_nama_pegawai');
+    String? berangkat = preferences?.getString("edit_tanggal_berangkat");
+    String? pulang = preferences?.getString("edit_tanggal_pulang");
+    String? maksud = preferences?.getString("edit_keperluan");
+
     setState(() {
-      nama = (pref.getString('edit_nama_pegawai'));
+      dateBerangkat = new TextEditingController(text: berangkat);
+      datePulang = new TextEditingController(text: pulang);
+      keperluan = new TextEditingController(text: maksud);
     });
-    print("namanya adalah " + nama.toString());
-
-    return nama;
   }
 
   //GET DATA LOKASI ASAL
@@ -167,6 +171,8 @@ class _MyPerdinBaru extends State<EditPerdin> {
       _valPegawainrp = _dataPegawai.first["nrp"];
     });
     //print("data : $lisData");
+    //  print(
+    //      "ID namanya adalah ${this.preferences?.getString("edit_nama_pegawai")}");
   }
 
   //GET LIST DATA LOKASI ASAL DI DROPDOWN
@@ -192,6 +198,7 @@ class _MyPerdinBaru extends State<EditPerdin> {
       _valLokasiId2 = _dataLokasi2.first["id"];
     });
     //  print("data : $lisData3");
+    //print("${this.preferences?.getString("edit_tanggal_berangkat")}");
   }
 
   @override
@@ -230,7 +237,7 @@ class _MyPerdinBaru extends State<EditPerdin> {
             menuMaxHeight: 600,
             borderRadius: BorderRadius.circular(20),
             hint: Text("Pilih Pegawai"),
-            value: _valPegawainrp,
+            value: "${this.preferences?.getString("edit_nama_pegawai")}",
             items: _dataPegawai.map<DropdownMenuItem<String>>((item) {
               return DropdownMenuItem<String>(
                 child: Text(item['nama']),
@@ -265,7 +272,7 @@ class _MyPerdinBaru extends State<EditPerdin> {
             menuMaxHeight: 600,
             borderRadius: BorderRadius.circular(20),
             hint: Text("Pilih Kota Asal"),
-            value: _valLokasiId,
+            value: "${this.preferences?.getString("edit_kota_asal")}",
             items: _dataLokasi.map<DropdownMenuItem<String>>((item) {
               return DropdownMenuItem<String>(
                 child: Text(item['nama']),
@@ -275,7 +282,7 @@ class _MyPerdinBaru extends State<EditPerdin> {
             onChanged: (value) async {
               setState(() {
                 _valLokasiId = value.toString();
-                print("ID Asal " + _valLokasiId);
+                //    print("ID Asal " + _valLokasiId);
               });
             },
           ),
@@ -300,7 +307,7 @@ class _MyPerdinBaru extends State<EditPerdin> {
             menuMaxHeight: 600,
             borderRadius: BorderRadius.circular(20),
             hint: Text("Pilih Kota Tujuan"),
-            value: _valLokasiId2,
+            value: "${this.preferences?.getString("edit_kota_tujuan")}",
             items: _dataLokasi2.map<DropdownMenuItem<String>>((item) {
               return DropdownMenuItem<String>(
                 child: Text(item['nama']),
@@ -310,7 +317,7 @@ class _MyPerdinBaru extends State<EditPerdin> {
             onChanged: (value) {
               setState(() {
                 _valLokasiId2 = value.toString();
-                print("ID Tujuan " + _valLokasiId2);
+                // print("ID Tujuan " + _valLokasiId2);
               });
             },
           ),
@@ -510,7 +517,7 @@ class _MyPerdinBaru extends State<EditPerdin> {
             String db = dateBerangkat.text;
             String dp = datePulang.text;
             String k = keperluan.text;
-            postperdin(
+            /* postperdin(
                 _valPegawainrp.toString(),
                 _valLokasiId.toString(),
                 _valLokasiId2.toString(),
@@ -521,9 +528,9 @@ class _MyPerdinBaru extends State<EditPerdin> {
                 k.toString(),
                 uangsakus.toString(),
                 ids.toString());
-
-            Navigator.push(context,
-                new MaterialPageRoute(builder: (context) => new Dashboard()));
+              */
+            //  Navigator.push(context,
+            //     new MaterialPageRoute(builder: (context) => new Dashboard()));
           },
           child: Text(
             'Simpan',
@@ -543,7 +550,7 @@ class _MyPerdinBaru extends State<EditPerdin> {
           icon: Icon(Icons.arrow_back_ios),
         ),
         title: Text(
-          "Tambah Data Perdin Baru",
+          "Edit Perjalanan Dinas",
           style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w700),
         ),
       ),

@@ -49,7 +49,7 @@ class _MyDashboard extends State<Dashboard> {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        print("IDnya adalah" + id);
+        //  print("IDnya adalah" + id);
         print("Berhasil ambil data");
         final pref = await SharedPreferences.getInstance();
 
@@ -62,8 +62,7 @@ class _MyDashboard extends State<Dashboard> {
             'edit_tanggal_berangkat', data["tanggal_berangkat"].toString());
         await pref.setString(
             "edit_tanggal_pulang", data["tanggal_pulang"].toString());
-        await pref.setString(
-            "edit_keperluan", data["edit_keperluan"].toString());
+        await pref.setString("edit_keperluan", data["maksud"].toString());
       } else {
         print("Gagal ambil data");
       }
@@ -234,8 +233,8 @@ class _MyDashboard extends State<Dashboard> {
                                             builder: (context) =>
                                                 new EditPerdin()));
                                     editperdin(users[index].id.toString());
-                                    print("ID for edit adalah " +
-                                        users[index].id.toString());
+                                    //    print("ID for edit adalah " +
+                                    //      users[index].id.toString());
                                   },
                                   icon: Icon(Icons.edit),
                                 ),
